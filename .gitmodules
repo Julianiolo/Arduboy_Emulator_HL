@@ -1,0 +1,3 @@
+[submodule "dependencies/ATmega32u4_Emulator"]
+	path = dependencies/ATmega32u4_Emulator
+	url = https://github.com/Julianiolo/ATmega32u4_Emulator.git
