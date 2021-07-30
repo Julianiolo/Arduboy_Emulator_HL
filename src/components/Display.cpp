@@ -16,6 +16,24 @@ AB::Display::~Display() {
 #endif
 }
 
+void AB::Display::reset() {
+	on = false;
+	screenOverride = false;
+	screenOverrideVal = false;
+	invert = false;
+
+	startLineReg = 0;
+	clockDevisor = 1;
+	oscFreq = 0b1000;
+
+	addrPtr = 0;
+
+	parameterStackPointer = 0;
+	isRecivingParameters = false;
+	currentCommandID = -1;
+	currentCommandByte = -1;
+}
+
 void AB::Display::reciveSPIByte(uint8_t byte){
 	if (isDataMode())
 		reciveDataByte(byte);

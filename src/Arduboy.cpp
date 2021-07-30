@@ -8,6 +8,11 @@ bool Arduboy::load(const char* fileName) {
 	return mcu.flash.loadFromHexFile(fileName);
 }
 
+void Arduboy::reset() {
+	mcu.reset();
+	display.reset();
+}
+
 void Arduboy::newFrame() {
 	updateButtons();
 	mcu.execute(A32u4::CPU::ClockFreq/targetFPS, execFlags);

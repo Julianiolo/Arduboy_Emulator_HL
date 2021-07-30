@@ -95,6 +95,8 @@ namespace AB {
 		Display(A32u4::ATmega32u4* mcu);
 		~Display();
 
+		void reset();
+
 		void activate();
 		void update();
 

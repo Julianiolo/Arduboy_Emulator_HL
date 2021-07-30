@@ -34,6 +34,8 @@ public:
 
 	bool load(const char* fileName);
 
+	void reset();
+
 	void newFrame();
 
 	void pressButtons(uint8_t buttons);
