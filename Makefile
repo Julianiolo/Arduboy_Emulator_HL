@@ -1,14 +1,15 @@
 # settings here:
 
-BUILDMODE?=DEBUG
+BUILD_MODE?=DEBUG
 
 CC    :=g++
 CFLAGS?=-Wall -Wno-narrowing
 CSTD  ?=-std=c++17
+RELEASE_OPTIM?= -O2
 
 SRC_DIR         ?=src/
 BUILD_DIR       ?=build/make/
-OBJ_DIR         ?=$(BUILD_DIR)objs/
+OBJ_DIR         ?=$(BUILD_DIR)objs/Arduboy_Emulator_HL/
 DEPENDENCIES_DIR?=dependencies/
 
 OUT_NAME?=Arduboy_Emulator_HL.a
@@ -26,16 +27,20 @@ endif
 # get current dir
 current_dir :=$(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 
-ifeq ($(BUILDMODE),DEBUG)
-	CFLAGS += -g
+BUILD_MODE_CFLAGS:=
+ifeq ($(BUILD_MODE),DEBUG)
+	BUILD_MODE_CFLAGS += -g
+else
+	BUILD_MODE_CFLAGS +=$(RELEASE_OPTIM)
 endif
-CPP_COMP_DEP_FLAGS=-MMD -MF ${@:.o=.d}
 
 MAKE_CMD:=make
 ifeq ($(detected_OS),Windows)
 	MAKE_CMD:=mingw32-make
 	BASH_PREFX:=bash -c 
 endif
+
+CDEPFLAGS=-MMD -MF ${@:.o=.d}
 
 OUT_PATH:=$(OUT_DIR)$(OUT_NAME)
 
@@ -49,7 +54,7 @@ DEPENDENCIES_LIBS_DIR:=$(BUILD_DIR)dependencies/libs
 DEP_LIBS_DIRS:=$(addprefix $(DEPENDENCIES_DIR),ATmega32u4_Emulator/)
 
 DEP_INCLUDE_FLAGS:=$(addprefix -I,$(DEPENDENCIES_INCLUDE_PATHS))
-DEP_BUILD_DIR:=$(current_dir)$(BUILD_DIR)dependencies/
+DEP_BUILD_DIR:=$(BUILD_DIR)
 
 # rules:
 
@@ -64,13 +69,13 @@ $(OUT_PATH): deps $(OBJ_FILES)
 
 $(OBJ_DIR)%.o:%.cpp
 	$(BASH_PREFX)"mkdir -p $(dir $@)"
-	$(CC) $(CFLAGS) $(CSTD) $(DEP_INCLUDE_FLAGS) -c $< -o $@ $(CDEPFLAGS)
+	$(CC) $(CFLAGS) $(CSTD) $(BUILD_MODE_CFLAGS) $(DEP_INCLUDE_FLAGS) -c $< -o $@ $(CDEPFLAGS)
 
 -include $(DEP_FILES)
 
 deps:
-	$(MAKE_CMD) -C $(DEP_LIBS_DIRS) BUILDMODE=$(BUILDMODE) CC=$(CC) CFLAGS="$(CFLAGS)" CSTD=$(CSTD) BUILD_DIR=$(DEP_BUILD_DIR)ATmega32u4_Emulator/
+	$(MAKE_CMD) -C $(DEP_LIBS_DIRS) BUILD_MODE=$(BUILD_MODE) CC=$(CC) CFLAGS="$(CFLAGS)" CSTD=$(CSTD) RELEASE_OPTIM=$(RELEASE_OPTIM) BUILD_DIR=$(DEP_BUILD_DIR)
 
 clean:
-	$(MAKE_CMD) -C $(DEP_LIBS_DIRS) clean BUILD_DIR=$(DEP_BUILD_DIR)ATmega32u4_Emulator/
+	$(MAKE_CMD) -C $(DEP_LIBS_DIRS) clean BUILD_DIR=$(DEP_BUILD_DIR)
 	rm -rf $(BUILD_DIR)
