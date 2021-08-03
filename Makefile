@@ -11,7 +11,7 @@ BUILD_DIR       ?=build/make/
 OBJ_DIR         ?=$(BUILD_DIR)objs/
 DEPENDENCIES_DIR?=dependencies/
 
-OUT_NAME?=ABemu.a
+OUT_NAME?=Arduboy_Emulator_HL.a
 OUT_DIR ?=$(BUILD_DIR)
 
 # you dont need to worry about this stuff:
