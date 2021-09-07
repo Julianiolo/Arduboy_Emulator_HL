@@ -2,9 +2,9 @@
 
 Arduboy::Arduboy() : display(&mcu) {
 	mcu.dataspace.setSPIByteCallB(display.spiCallB);
-	mcu.setLogCallB(getLog);
-	mcu.setLogCallBSimple(getLogSimple);
-	activate();
+	mcu.setLogCallB(log);
+	mcu.setLogCallBSimple(logSimple);
+	activateLog();
 }
 
 bool Arduboy::load(const char* fileName) {
@@ -37,20 +37,20 @@ void Arduboy::updateButtons() {
 }
 
 Arduboy* Arduboy::activeAB = nullptr;
-void Arduboy::activate(){
+void Arduboy::activateLog(){
 	activeAB = this;
 }
-void Arduboy::getLog(const char* msg, A32u4::ATmega32u4::LogLevel logLevel, const char* fileName , size_t lineNum, const char* Module){
+void Arduboy::log(A32u4::ATmega32u4::LogLevel logLevel, const char* msg, const char* fileName , size_t lineNum, const char* Module){
 	if(activeAB != nullptr){
 		if(activeAB->logCallB != nullptr){
-			activeAB->logCallB(msg,logLevel,fileName,lineNum,Module);
+			activeAB->logCallB(logLevel, msg,fileName,lineNum,Module);
 		}
 	}
 }
-void Arduboy::getLogSimple(const char* msg, A32u4::ATmega32u4::LogLevel logLevel){
+void Arduboy::logSimple(A32u4::ATmega32u4::LogLevel logLevel, const char* msg){
 	if(activeAB != nullptr){
 		if(activeAB->logCallBSimple != nullptr){
-			activeAB->logCallBSimple(msg,logLevel);
+			activeAB->logCallBSimple(logLevel, msg);
 		}
 	}
 }
