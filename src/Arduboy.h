@@ -1,5 +1,5 @@
-#ifndef _ARDUBOY
-#define _ARDUBOY
+#ifndef _ARDUBOY_H
+#define _ARDUBOY_H
 
 #include "ATmega32u4.h"
 #include "components/Display.h"
@@ -47,15 +47,15 @@ public:
 	void pressButtons(uint8_t buttons);
 	void releaseButtons(uint8_t buttons);
 
+	void activateLog();
 	void setLogCallB(LogCallB newLogCallB);
 	void setLogCallBSimple(LogCallBSimple newLogCallBSimple);
 private:
 	void updateButtons();
 
 	static Arduboy* activeAB;
-	void activate();
-	static void getLog(const char* msg, A32u4::ATmega32u4::LogLevel logLevel, const char* fileName , size_t lineNum, const char* Module);
-	static void getLogSimple(const char* msg, A32u4::ATmega32u4::LogLevel logLevel);
+	static void log(A32u4::ATmega32u4::LogLevel logLevel, const char* msg, const char* fileName , size_t lineNum, const char* Module);
+	static void logSimple(A32u4::ATmega32u4::LogLevel logLevel, const char* msg);
 };
 
 #endif
