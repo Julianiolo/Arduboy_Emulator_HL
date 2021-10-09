@@ -84,9 +84,10 @@ void AB::Display::handleCommand(uint8_t byte, uint8_t id) {
 		case 3:
 			on = byte & 0b1;     break;
 		
-		/* scroll commands
+		/* scroll commands */
 		case 4:
 			break;
+
 		case 5:
 			break;
 		case 6:
@@ -95,7 +96,6 @@ void AB::Display::handleCommand(uint8_t byte, uint8_t id) {
 			break;
 		case 8:
 			break;
-		*/
 
 		// addressing commands
 		case 9:
