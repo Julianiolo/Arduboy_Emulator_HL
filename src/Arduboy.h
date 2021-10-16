@@ -43,6 +43,7 @@ public:
 	void reset();
 
 	void newFrame();
+	uint64_t cycsPerFrame() const;
 
 	void pressButtons(uint8_t buttons);
 	void releaseButtons(uint8_t buttons);

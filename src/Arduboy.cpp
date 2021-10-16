@@ -19,8 +19,12 @@ void Arduboy::reset() {
 
 void Arduboy::newFrame() {
 	updateButtons();
-	mcu.execute(A32u4::CPU::ClockFreq/targetFPS, execFlags);
+	mcu.execute(cycsPerFrame(), execFlags);
 	display.update();
+}
+
+uint64_t Arduboy::cycsPerFrame() const{
+	return A32u4::CPU::ClockFreq/targetFPS;
 }
 
 void Arduboy::pressButtons(uint8_t buttons) {
