@@ -11,6 +11,8 @@ namespace AB {
 		static constexpr uint8_t WIDTH = 128;
 		static constexpr uint8_t HEIGHT = 64;
 	private:
+		A32u4::ATmega32u4* mcu;
+
 #if !USE_HEAP
 		bool pixels[WIDTH*HEIGHT];
 		uint8_t pixelsRaw[(WIDTH*HEIGHT)/8];
@@ -71,7 +73,7 @@ namespace AB {
 			{0b10001101,0xFF,1}, // charge pump regulator
 		};
 
-		A32u4::ATmega32u4* mcu;
+		
 
 		uint8_t parameterStack[10];
 		uint8_t parameterStackPointer = 0;

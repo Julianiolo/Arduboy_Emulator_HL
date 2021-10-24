@@ -68,7 +68,7 @@ void AB::Display::reciveDataByte(uint8_t byte) {
 }
 
 void AB::Display::handleCommand(uint8_t byte, uint8_t id) {
-	if (id == -1)
+	if (id == (uint8_t)-1)
 		id = getCommandInd(byte);
 
 	switch (id) {
