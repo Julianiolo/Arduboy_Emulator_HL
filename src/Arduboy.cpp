@@ -19,6 +19,7 @@ void Arduboy::reset() {
 
 void Arduboy::newFrame() {
 	updateButtons();
+	display.activate();
 	mcu.execute(cycsPerFrame(), execFlags);
 	display.update();
 }
