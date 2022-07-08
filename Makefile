@@ -37,14 +37,13 @@ endif
 MAKE_CMD:=make
 ifeq ($(detected_OS),Windows)
 	MAKE_CMD:=mingw32-make
-	BASH_PREFX:=bash -c 
 endif
 
 CDEPFLAGS=-MMD -MF ${@:.o=.d}
 
 OUT_PATH:=$(OUT_DIR)$(OUT_NAME)
 
-SRC_FILES:=$(shell $(BASH_PREFX)"find $(SRC_DIR) -name '*.cpp'")
+SRC_FILES:=$(shell find $(SRC_DIR) -name '*.cpp')
 OBJ_FILES:=$(addprefix $(OBJ_DIR),${SRC_FILES:.cpp=.o})
 DEP_FILES:=$(patsubst %.o,%.d,$(OBJ_FILES))
 
@@ -64,11 +63,11 @@ all: $(OUT_PATH)
 
 $(OUT_PATH): deps $(OBJ_FILES)
 	# BUILDING Arduboy_Emulator_HL
-	$(BASH_PREFX)"mkdir -p $(OUT_DIR)"
+	mkdir -p $(OUT_DIR)
 	ar rvs $@ $(OBJ_FILES)
 
 $(OBJ_DIR)%.o:%.cpp
-	$(BASH_PREFX)"mkdir -p $(dir $@)"
+	mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) $(CSTD) $(BUILD_MODE_CFLAGS) $(DEP_INCLUDE_FLAGS) -c $< -o $@ $(CDEPFLAGS)
 
 -include $(DEP_FILES)
