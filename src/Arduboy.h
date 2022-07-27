@@ -52,9 +52,9 @@ public:
 	void activateLog();
 	void setLogCallB(LogCallB newLogCallB);
 	void setLogCallBSimple(LogCallBSimple newLogCallBSimple);
-private:
-	void updateButtons();
 
+	void updateButtons();
+private:
 	static Arduboy* activeAB;
 	static void log(A32u4::ATmega32u4::LogLevel logLevel, const char* msg, const char* fileName , size_t lineNum, const char* Module);
 	static void logSimple(A32u4::ATmega32u4::LogLevel logLevel, const char* msg);

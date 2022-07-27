@@ -1,18 +1,28 @@
 # settings here:
 
 BUILD_MODE?=DEBUG
+PLATFORM?=PLATFORM_DESKTOP
 
-CC    :=g++
+ifeq ($(PLATFORM),PLATFORM_DESKTOP)
+    CC?=gcc
+    CXX?=g++
+	AR:=ar
+endif
+ifeq ($(PLATFORM),PLATFORM_WEB)
+    CC:=emcc
+    CXX:=em++
+	AR:=emar
+endif
 CFLAGS?=-Wall -Wno-narrowing
 CSTD  ?=-std=c++17
 RELEASE_OPTIM?= -O2
 
 SRC_DIR         ?=src/
-BUILD_DIR       ?=build/make/
+BUILD_DIR       ?=build/make/$(PLATFORM)_$(BUILD_MODE)/
 OBJ_DIR         ?=$(BUILD_DIR)objs/Arduboy_Emulator_HL/
 DEPENDENCIES_DIR?=dependencies/
 
-OUT_NAME?=Arduboy_Emulator_HL.a
+OUT_NAME?=libArduboy_Emulator_HL.a
 OUT_DIR ?=$(BUILD_DIR)
 
 # you dont need to worry about this stuff:
@@ -35,9 +45,6 @@ else
 endif
 
 MAKE_CMD:=make
-ifeq ($(detected_OS),Windows)
-	MAKE_CMD:=mingw32-make
-endif
 
 CDEPFLAGS=-MMD -MF ${@:.o=.d}
 
@@ -64,16 +71,16 @@ all: $(OUT_PATH)
 $(OUT_PATH): deps $(OBJ_FILES)
 	# BUILDING Arduboy_Emulator_HL
 	mkdir -p $(OUT_DIR)
-	ar rvs $@ $(OBJ_FILES)
+	$(AR) rvs $@ $(OBJ_FILES)
 
 $(OBJ_DIR)%.o:%.cpp
 	mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) $(CSTD) $(BUILD_MODE_CFLAGS) $(DEP_INCLUDE_FLAGS) -c $< -o $@ $(CDEPFLAGS)
+	$(CXX) $(CFLAGS) $(CSTD) $(BUILD_MODE_CFLAGS) $(DEP_INCLUDE_FLAGS) -c $< -o $@ $(CDEPFLAGS)
 
 -include $(DEP_FILES)
 
 deps:
-	$(MAKE_CMD) -C $(DEP_LIBS_DIRS) BUILD_MODE=$(BUILD_MODE) CC=$(CC) CFLAGS="$(CFLAGS)" CSTD=$(CSTD) RELEASE_OPTIM=$(RELEASE_OPTIM) BUILD_DIR=$(DEP_BUILD_DIR)
+	$(MAKE_CMD) -C $(DEP_LIBS_DIRS) PLATFORM=$(PLATFORM) BUILD_MODE=$(BUILD_MODE) CFLAGS="$(CFLAGS)" CSTD=$(CSTD) RELEASE_OPTIM=$(RELEASE_OPTIM) BUILD_DIR=$(DEP_BUILD_DIR)
 
 clean:
 	$(MAKE_CMD) -C $(DEP_LIBS_DIRS) clean BUILD_DIR=$(DEP_BUILD_DIR)
