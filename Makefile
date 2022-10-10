@@ -54,7 +54,7 @@ SRC_FILES:=$(shell find $(SRC_DIR) -name '*.cpp')
 OBJ_FILES:=$(addprefix $(OBJ_DIR),${SRC_FILES:.cpp=.o})
 DEP_FILES:=$(patsubst %.o,%.d,$(OBJ_FILES))
 
-DEPENDENCIES_INCLUDE_PATHS:=dependencies/ATmega32u4_Emulator/src
+DEPENDENCIES_INCLUDE_PATHS:=dependencies/ATmega32u4_Emulator/src dependencies/ATmega32u4_Emulator/dependencies/CPP_Utils/src
 DEPENDENCIES_LIBS_DIR:=$(BUILD_DIR)dependencies/libs
 
 DEP_LIBS_DIRS:=$(addprefix $(DEPENDENCIES_DIR),ATmega32u4_Emulator/)
