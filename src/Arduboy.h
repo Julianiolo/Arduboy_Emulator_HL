@@ -39,6 +39,7 @@ public:
 
 	Arduboy();
 
+	bool loadFromHexString(const char* str, const char* str_end = 0);
 	bool loadFromHexFile(const char* fileName);
 
 	void reset();

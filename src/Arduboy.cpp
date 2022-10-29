@@ -7,6 +7,9 @@ Arduboy::Arduboy() : display(&mcu) {
 	activateLog();
 }
 
+bool Arduboy::loadFromHexString(const char* str, const char* str_end) {
+	return mcu.flash.loadFromHexString(str, str_end);
+}
 bool Arduboy::loadFromHexFile(const char* fileName) {
 	return mcu.flash.loadFromHexFile(fileName);
 }
