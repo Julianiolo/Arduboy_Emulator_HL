@@ -13,8 +13,10 @@ ifeq ($(PLATFORM),PLATFORM_WEB)
     CXX:=em++
 	AR:=emar
 endif
-CFLAGS?=-Wall -Wno-narrowing $(CUSTOM_CFLAGS)
-CSTD  ?=-std=c++17
+CFLAGS:=-Wall -Wextra -Wpedantic -Wno-narrowing $(CUSTOM_CFLAGS)
+CXXFLAGS:=-Wall -Wextra -Wpedantic -Wno-narrowing $(CUSTOM_CXXFLAGS)
+CSTD:=-std=c99
+CXXSTD:=-std=c++17
 RELEASE_OPTIM?= -O3 -flto
 
 SRC_DIR         ?=src/
@@ -37,16 +39,19 @@ endif
 # get current dir
 current_dir :=$(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 
-BUILD_MODE_CFLAGS:=
+DEF_FLAGS:=
+
+BUILD_MODE_FLAGS:=
 ifeq ($(BUILD_MODE),DEBUG)
-	BUILD_MODE_CFLAGS += -g
+	BUILD_MODE_FLAGS +=-g
+	DEF_FLAGS += -D_DEBUG
 else
-	BUILD_MODE_CFLAGS +=$(RELEASE_OPTIM)
+	BUILD_MODE_FLAGS +=$(RELEASE_OPTIM)
 endif
 
 MAKE_CMD:=make
 
-CDEPFLAGS=-MMD -MF ${@:.o=.d}
+DEP_FLAGS=-MMD -MF ${@:.o=.d}
 
 OUT_PATH:=$(OUT_DIR)$(OUT_NAME)
 
@@ -62,6 +67,10 @@ DEP_LIBS_DIRS:=$(addprefix $(DEPENDENCIES_DIR),ATmega32u4_Emulator/)
 DEP_INCLUDE_FLAGS:=$(addprefix -I,$(DEPENDENCIES_INCLUDE_PATHS))
 DEP_BUILD_DIR:=$(BUILD_DIR)
 
+
+CFLAGS += $(BUILD_MODE_FLAGS)
+CXXFLAGS += $(BUILD_MODE_FLAGS)
+
 # rules:
 
 .PHONY:all clean
@@ -75,12 +84,12 @@ $(OUT_PATH): deps $(OBJ_FILES)
 
 $(OBJ_DIR)%.o:%.cpp
 	mkdir -p $(dir $@)
-	$(CXX) $(CFLAGS) $(CSTD) $(BUILD_MODE_CFLAGS) $(DEP_INCLUDE_FLAGS) -c $< -o $@ $(CDEPFLAGS)
+	$(CXX) $(CXXFLAGS) $(CXXSTD) $(DEP_INCLUDE_FLAGS) -c $< -o $@ $(DEP_FLAGS)
 
 -include $(DEP_FILES)
 
 deps:
-	$(MAKE_CMD) -C $(DEP_LIBS_DIRS) PLATFORM=$(PLATFORM) BUILD_MODE=$(BUILD_MODE) CSTD=$(CSTD) RELEASE_OPTIM=$(RELEASE_OPTIM) BUILD_DIR=$(DEP_BUILD_DIR) "CUSTOM_CFLAGS=$(CUSTOM_CFLAGS)"
+	$(MAKE_CMD) -C $(DEP_LIBS_DIRS) PLATFORM=$(PLATFORM) BUILD_MODE=$(BUILD_MODE) RELEASE_OPTIM=$(RELEASE_OPTIM) BUILD_DIR=$(DEP_BUILD_DIR) CUSTOM_CFLAGS="$(CUSTOM_CFLAGS)" CUSTOM_CXXFLAGS="$(CUSTOM_CXXFLAGS)" CSTD="$(CSTD)" CXXSTD="$(CXXSTD)"
 
 clean:
 	$(MAKE_CMD) -C $(DEP_LIBS_DIRS) clean BUILD_DIR=$(DEP_BUILD_DIR)
