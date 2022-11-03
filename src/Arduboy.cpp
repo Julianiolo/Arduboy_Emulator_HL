@@ -15,7 +15,6 @@ bool Arduboy::loadFromHexFile(const char* fileName) {
 }
 
 void Arduboy::reset() {
-	
 	mcu.reset();
 	display.reset();
 }
@@ -32,10 +31,10 @@ uint64_t Arduboy::cycsPerFrame() const{
 }
 
 void Arduboy::pressButtons(uint8_t buttons) {
-
+	buttonState |= buttons;
 }
 void Arduboy::releaseButtons(uint8_t buttons) {
-
+	buttonState &= ~(buttons);
 }
 
 void Arduboy::updateButtons() {
