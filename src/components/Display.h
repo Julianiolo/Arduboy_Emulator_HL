@@ -13,7 +13,7 @@ namespace AB {
 	private:
 		A32u4::ATmega32u4* mcu;
 
-#if !USE_HEAP
+#if !AB_USE_HEAP
 		bool pixels[WIDTH*HEIGHT];
 		uint8_t pixelsRaw[(WIDTH*HEIGHT)/8];
 #else

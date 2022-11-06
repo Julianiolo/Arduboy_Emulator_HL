@@ -128,6 +128,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\dependencies\ATmega32u4_Emulator\src\;$(SolutionDir)..\..\..\dependencies\Arduboy_Emulator_HL\dependencies\ATmega32u4_Emulator\dependencies\CPP_Utils\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -164,6 +165,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\dependencies\ATmega32u4_Emulator\src\;$(SolutionDir)..\..\..\dependencies\Arduboy_Emulator_HL\dependencies\ATmega32u4_Emulator\dependencies\CPP_Utils\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
     </ClCompile>
     <Link>
       <SubSystem>
