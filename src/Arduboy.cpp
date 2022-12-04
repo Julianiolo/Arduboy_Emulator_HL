@@ -46,6 +46,7 @@ void Arduboy::updateButtons() {
 Arduboy* Arduboy::activeAB = nullptr;
 void Arduboy::activateLog(){
 	activeAB = this;
+	mcu.activateLog();
 }
 void Arduboy::log(A32u4::ATmega32u4::LogLevel logLevel, const char* msg, const char* fileName , size_t lineNum, const char* Module){
 	if(activeAB != nullptr){
