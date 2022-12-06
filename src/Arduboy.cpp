@@ -1,10 +1,10 @@
 #include "Arduboy.h"
 
 Arduboy::Arduboy() : display(&mcu) {
+	activateLog();
 	mcu.dataspace.setSPIByteCallB(display.spiCallB);
 	mcu.setLogCallB(log);
 	mcu.setLogCallBSimple(logSimple);
-	activateLog();
 }
 
 bool Arduboy::loadFromHexString(const char* str, const char* str_end) {
@@ -49,18 +49,14 @@ void Arduboy::activateLog(){
 	mcu.activateLog();
 }
 void Arduboy::log(A32u4::ATmega32u4::LogLevel logLevel, const char* msg, const char* fileName , size_t lineNum, const char* Module){
-	if(activeAB != nullptr){
-		if(activeAB->logCallB != nullptr){
-			activeAB->logCallB(logLevel, msg,fileName,lineNum,Module);
-		}
-	}
+	MCU_ASSERT(activeAB != nullptr);
+	MCU_ASSERT(activeAB->logCallB != nullptr);
+	activeAB->logCallB(logLevel, msg,fileName,lineNum,Module);
 }
 void Arduboy::logSimple(A32u4::ATmega32u4::LogLevel logLevel, const char* msg){
-	if(activeAB != nullptr){
-		if(activeAB->logCallBSimple != nullptr){
-			activeAB->logCallBSimple(logLevel, msg);
-		}
-	}
+	MCU_ASSERT(activeAB != nullptr);
+	MCU_ASSERT(activeAB->logCallBSimple != nullptr);
+	activeAB->logCallBSimple(logLevel, msg);
 }
 
 void Arduboy::setLogCallB(LogCallB newLogCallB){
