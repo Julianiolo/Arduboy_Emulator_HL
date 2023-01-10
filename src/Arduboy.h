@@ -44,7 +44,7 @@ public:
 
 	void reset();
 
-	void newFrame();
+	void newFrame(float speed = 1);
 	uint64_t cycsPerFrame() const;
 
 	void pressButtons(uint8_t buttons);

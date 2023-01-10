@@ -19,10 +19,10 @@ void Arduboy::reset() {
 	display.reset();
 }
 
-void Arduboy::newFrame() {
+void Arduboy::newFrame(float speed) {
 	updateButtons();
 	display.activate();
-	mcu.execute(cycsPerFrame(), execFlags);
+	mcu.execute((uint64_t)(cycsPerFrame() * speed), execFlags);
 	display.update();
 }
 
