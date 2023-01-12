@@ -9,8 +9,10 @@ public:
 	typedef A32u4::ATmega32u4::LogCallB LogCallB;
 	typedef A32u4::ATmega32u4::LogCallBSimple LogCallBSimple;
 private:
-	LogCallB logCallB = nullptr;
-	LogCallBSimple logCallBSimple = nullptr;
+	LogCallB logCallB = defaultLog;
+	LogCallBSimple logCallBSimple = defaultLogSimple;
+	static void defaultLog(A32u4::ATmega32u4::LogLevel logLevel, const char *msg, const char *fileName, size_t lineNum, const char *Module);
+	static void defaultLogSimple(A32u4::ATmega32u4::LogLevel logLevel, const char *msg);
 public:
 	A32u4::ATmega32u4 mcu;
 	AB::Display display;
