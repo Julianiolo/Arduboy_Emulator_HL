@@ -83,3 +83,20 @@ void Arduboy::defaultLogSimple(A32u4::ATmega32u4::LogLevel logLevel, const char 
 		msg
 	);
 }
+
+void Arduboy::getState(std::ostream& output){
+	mcu.getState(output);
+	display.getState(output);
+
+	output << execFlags;
+	output << targetFPS;
+	output << buttonState;
+}
+void Arduboy::setState(std::istream& input){
+	mcu.setState(input);
+	display.setState(input);
+
+	input >> execFlags;
+	input >> targetFPS;
+	input >> buttonState;
+}

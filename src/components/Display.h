@@ -2,7 +2,11 @@
 #define _ARDUBOY_DISPLAY
 
 #include <stdint.h>
+#include <array>
+#include <vector>
+
 #include "../config.h"
+
 #include "ATmega32u4.h"
 
 namespace AB {
@@ -14,11 +18,11 @@ namespace AB {
 		A32u4::ATmega32u4* mcu;
 
 #if !AB_USE_HEAP
-		bool pixels[WIDTH*HEIGHT];
-		uint8_t pixelsRaw[(WIDTH*HEIGHT)/8];
+		std::array<uint8_t,WIDTH*HEIGHT> pixels;
+		std::array<uint8_t,(WIDTH*HEIGHT)/8> pixelsRaw;
 #else
-		bool* pixels;
-		uint8_t* pixelsRaw;
+		std::vector<uint8_t> pixels;
+		std::vector<uint8_t> pixelsRaw;
 #endif
 		bool on = false;
 		bool screenOverride = false;
@@ -75,7 +79,7 @@ namespace AB {
 
 		
 
-		uint8_t parameterStack[10];
+		std::array<uint8_t,10> parameterStack;
 		uint8_t parameterStackPointer = 0;
 		uint8_t isRecivingParameters = false;
 
@@ -95,7 +99,6 @@ namespace AB {
 		void stopRecivingParams();
 	public:
 		Display(A32u4::ATmega32u4* mcu);
-		~Display();
 
 		void reset();
 
@@ -106,6 +109,9 @@ namespace AB {
 
 		static Display* activeDisplay;
 		static void spiCallB(uint8_t data);
+
+		void getState(std::ostream& output);
+		void setState(std::istream& input);
 	};
 }
 

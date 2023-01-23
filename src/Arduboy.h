@@ -1,6 +1,8 @@
 #ifndef _ARDUBOY_H
 #define _ARDUBOY_H
 
+#include <iostream>
+
 #include "ATmega32u4.h"
 #include "components/Display.h"
 
@@ -57,6 +59,10 @@ public:
 	void setLogCallBSimple(LogCallBSimple newLogCallBSimple);
 
 	void updateButtons();
+
+	void getState(std::ostream& output);
+	void setState(std::istream& input);
+
 private:
 	static Arduboy* activeAB;
 	static void log(A32u4::ATmega32u4::LogLevel logLevel, const char* msg, const char* fileName , size_t lineNum, const char* Module);

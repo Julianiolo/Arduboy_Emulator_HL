@@ -3,17 +3,10 @@
 
 AB::Display::Display(A32u4::ATmega32u4* mcu) : mcu(mcu)
 #if USE_HEAP
-,pixels(new bool[WIDTH*HEIGHT]), pixelsRaw(new uint8_t[(WIDTH*HEIGHT)/8])
+,pixels(WIDTH*HEIGHT), pixelsRaw((WIDTH*HEIGHT)/8)
 #endif
 {
 	activate();
-}
-
-AB::Display::~Display() {
-#if USE_HEAP
-	delete[] pixels;
-	delete[] pixelsRaw;
-#endif
 }
 
 void AB::Display::reset() {
@@ -216,10 +209,55 @@ void AB::Display::update() {
 }
 
 bool& AB::Display::getPixel(uint8_t x, uint8_t y) {
-	return pixels[y * WIDTH + x];
+	return (bool&)pixels[y * WIDTH + x];
 }
 
 AB::Display* AB::Display::activeDisplay;
 void AB::Display::spiCallB(uint8_t data) {
 	activeDisplay->reciveSPIByte(data);
+}
+
+void AB::Display::getState(std::ostream& output){
+	output.write((const char*)&pixels[0], pixels.size());
+	output.write((const char*)&pixelsRaw[0], pixelsRaw.size());
+
+	output << on;
+	output << screenOverride;
+	output << screenOverrideVal;
+	output << invert;
+
+	output << startLineReg;
+	output << clockDevisor;
+	output << oscFreq;
+
+	output << addrPtr;
+
+	output.write((const char*)&parameterStack[0], parameterStack.size());
+	output << parameterStackPointer;
+	output << isRecivingParameters;
+
+	output << currentCommandID;
+	output << currentCommandByte;
+}
+void AB::Display::setState(std::istream& input){
+	input.read((char*)&pixels[0], pixels.size());
+	input.read((char*)&pixelsRaw[0], pixelsRaw.size());
+
+	input >> on;
+	input >> screenOverride;
+	input >> screenOverrideVal;
+	input >> invert;
+
+	input >> startLineReg;
+	input >> clockDevisor;
+	input >> oscFreq;
+
+	input >> addrPtr;
+
+	input.read((char*)&parameterStack[0], parameterStack.size());
+	input >> parameterStackPointer;
+	input >> isRecivingParameters;
+
+	input >> currentCommandID;
+	input >> currentCommandByte;
 }
