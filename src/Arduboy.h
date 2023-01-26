@@ -41,6 +41,8 @@ public:
 		Button_B     = 1 << Button_B_Bit
 	};
 
+	float emulationSpeed = 1;
+
 	Arduboy();
 
 	bool loadFromHexString(const char* str, const char* str_end = 0);
@@ -48,7 +50,7 @@ public:
 
 	void reset();
 
-	void newFrame(float speed = 1);
+	void newFrame();
 	uint64_t cycsPerFrame() const;
 
 	void pressButtons(uint8_t buttons);
