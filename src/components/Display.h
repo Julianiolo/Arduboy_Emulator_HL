@@ -112,6 +112,8 @@ namespace AB {
 
 		void getState(std::ostream& output);
 		void setState(std::istream& input);
+
+		bool operator==(const Display& other) const;
 	};
 }
 

@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <string>
 
+#include "StreamUtils.h"
+
 Arduboy::Arduboy() : display(&mcu) {
 	activateLog();
 	mcu.dataspace.setSPIByteCallB(display.spiCallB);
@@ -86,17 +88,17 @@ void Arduboy::defaultLogSimple(A32u4::ATmega32u4::LogLevel logLevel, const char 
 
 void Arduboy::getState(std::ostream& output){
 	mcu.getState(output);
-	display.getState(output);
+	//display.getState(output);
 
-	output << execFlags;
-	output << targetFPS;
-	output << buttonState;
+	//StreamUtils::write(output, execFlags);
+	//StreamUtils::write(output, targetFPS);
+	//StreamUtils::write(output, buttonState);
 }
 void Arduboy::setState(std::istream& input){
 	mcu.setState(input);
 	display.setState(input);
 
-	input >> execFlags;
-	input >> targetFPS;
-	input >> buttonState;
+	StreamUtils::read(input, &execFlags);
+	StreamUtils::read(input, &targetFPS);
+	StreamUtils::read(input, &buttonState);
 }

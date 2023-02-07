@@ -1,6 +1,8 @@
 #include "Display.h"
 #include <iostream>
 
+#include "StreamUtils.h"
+
 AB::Display::Display(A32u4::ATmega32u4* mcu) : mcu(mcu)
 #if AB_USE_HEAP
 ,pixels(WIDTH*HEIGHT), pixelsRaw((WIDTH*HEIGHT)/8)
@@ -221,43 +223,54 @@ void AB::Display::getState(std::ostream& output){
 	output.write((const char*)&pixels[0], pixels.size());
 	output.write((const char*)&pixelsRaw[0], pixelsRaw.size());
 
-	output << on;
-	output << screenOverride;
-	output << screenOverrideVal;
-	output << invert;
+	StreamUtils::write(output, on);
+	StreamUtils::write(output, screenOverride);
+	StreamUtils::write(output, screenOverrideVal);
+	StreamUtils::write(output, invert);
 
-	output << startLineReg;
-	output << clockDevisor;
-	output << oscFreq;
+	StreamUtils::write(output, startLineReg);
+	StreamUtils::write(output, clockDevisor);
+	StreamUtils::write(output, oscFreq);
 
-	output << addrPtr;
+	StreamUtils::write(output, addrPtr);
 
 	output.write((const char*)&parameterStack[0], parameterStack.size());
-	output << parameterStackPointer;
-	output << isRecivingParameters;
+	StreamUtils::write(output, parameterStackPointer);
+	StreamUtils::write(output, isRecivingParameters);
 
-	output << currentCommandID;
-	output << currentCommandByte;
+	StreamUtils::write(output, currentCommandID);
+	StreamUtils::write(output, currentCommandByte);
 }
 void AB::Display::setState(std::istream& input){
 	input.read((char*)&pixels[0], pixels.size());
 	input.read((char*)&pixelsRaw[0], pixelsRaw.size());
 
-	input >> on;
-	input >> screenOverride;
-	input >> screenOverrideVal;
-	input >> invert;
+	StreamUtils::read(input, &on);
+	StreamUtils::read(input, &screenOverride);
+	StreamUtils::read(input, &screenOverrideVal);
+	StreamUtils::read(input, &invert);
 
-	input >> startLineReg;
-	input >> clockDevisor;
-	input >> oscFreq;
+	StreamUtils::read(input, &startLineReg);
+	StreamUtils::read(input, &clockDevisor);
+	StreamUtils::read(input, &oscFreq);
 
-	input >> addrPtr;
+	StreamUtils::read(input, &addrPtr);
 
 	input.read((char*)&parameterStack[0], parameterStack.size());
-	input >> parameterStackPointer;
-	input >> isRecivingParameters;
+	StreamUtils::read(input, &parameterStackPointer);
+	StreamUtils::read(input, &isRecivingParameters);
 
-	input >> currentCommandID;
-	input >> currentCommandByte;
+	StreamUtils::read(input, &currentCommandID);
+	StreamUtils::read(input, &currentCommandByte);
+}
+
+bool AB::Display::operator==(const Display& other) const{
+#define _CMP_(x) (x==other.x)
+	return _CMP_(pixels) && _CMP_(pixelsRaw) &&
+		_CMP_(on) && _CMP_(screenOverride) && _CMP_(screenOverrideVal) && _CMP_(invert) &&
+		_CMP_(startLineReg) && _CMP_(clockDevisor) && _CMP_(oscFreq) &&
+		_CMP_(addrPtr) && 
+		_CMP_(parameterStack) && _CMP_(parameterStackPointer) && _CMP_(isRecivingParameters) && 
+		_CMP_(currentCommandID) && _CMP_(currentCommandByte);
+#undef _CMP_
 }
