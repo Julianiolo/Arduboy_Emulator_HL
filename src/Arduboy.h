@@ -9,12 +9,8 @@
 class Arduboy {
 public:
 	typedef A32u4::ATmega32u4::LogCallB LogCallB;
-	typedef A32u4::ATmega32u4::LogCallBSimple LogCallBSimple;
 private:
-	LogCallB logCallB = defaultLog;
-	LogCallBSimple logCallBSimple = defaultLogSimple;
-	static void defaultLog(A32u4::ATmega32u4::LogLevel logLevel, const char *msg, const char *fileName, size_t lineNum, const char *Module);
-	static void defaultLogSimple(A32u4::ATmega32u4::LogLevel logLevel, const char *msg);
+	LogCallB logCallB = A32u4::ATmega32u4::defaultLogHandler;
 public:
 	A32u4::ATmega32u4 mcu;
 	AB::Display display;
@@ -45,9 +41,6 @@ public:
 
 	Arduboy();
 
-	bool loadFromHexString(const char* str, const char* str_end = 0);
-	bool loadFromHexFile(const char* fileName);
-
 	void reset();
 
 	void newFrame();
@@ -58,7 +51,6 @@ public:
 
 	void activateLog();
 	void setLogCallB(LogCallB newLogCallB);
-	void setLogCallBSimple(LogCallBSimple newLogCallBSimple);
 
 	void updateButtons();
 
@@ -69,8 +61,7 @@ public:
 
 private:
 	static Arduboy* activeAB;
-	static void log(A32u4::ATmega32u4::LogLevel logLevel, const char* msg, const char* fileName , size_t lineNum, const char* Module);
-	static void logSimple(A32u4::ATmega32u4::LogLevel logLevel, const char* msg);
+	static void log(A32u4::ATmega32u4::LogLevel logLevel, const char* msg, const char* fileName = nullptr, int lineNum = -1, const char* Module = nullptr);
 };
 
 #endif
