@@ -148,7 +148,7 @@ void AB::Display::handleCurrentCommand() {
 }
 
 uint8_t AB::Display::getCommandInd(uint8_t firstByte) {
-	for (uint8_t i = 0; i < commandsLen; i++) {
+	for (uint8_t i = 0; i < commands.size(); i++) {
 		auto& c = commands[i];
 		if ((firstByte & c.idMask) == c.id) {
 			return i;

@@ -88,11 +88,12 @@ void Arduboy::defaultLogSimple(A32u4::ATmega32u4::LogLevel logLevel, const char 
 
 void Arduboy::getState(std::ostream& output){
 	mcu.getState(output);
-	//display.getState(output);
+	display.getState(output);
 
-	//StreamUtils::write(output, execFlags);
-	//StreamUtils::write(output, targetFPS);
-	//StreamUtils::write(output, buttonState);
+	StreamUtils::write(output, execFlags);
+	StreamUtils::write(output, targetFPS);
+	StreamUtils::write(output, buttonState);
+	StreamUtils::write(output, emulationSpeed);
 }
 void Arduboy::setState(std::istream& input){
 	mcu.setState(input);
@@ -101,4 +102,10 @@ void Arduboy::setState(std::istream& input){
 	StreamUtils::read(input, &execFlags);
 	StreamUtils::read(input, &targetFPS);
 	StreamUtils::read(input, &buttonState);
+	StreamUtils::read(input, &emulationSpeed);
+}
+bool Arduboy::operator==(const Arduboy& other) const{
+#define _CMP_(x) (x==other.x)
+	return _CMP_(mcu) && _CMP_(display) && _CMP_(execFlags) && _CMP_(targetFPS) && _CMP_(buttonState);
+#undef _CMP_
 }

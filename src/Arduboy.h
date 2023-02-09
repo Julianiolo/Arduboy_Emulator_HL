@@ -65,6 +65,8 @@ public:
 	void getState(std::ostream& output);
 	void setState(std::istream& input);
 
+	bool operator==(const Arduboy& other) const;
+
 private:
 	static Arduboy* activeAB;
 	static void log(A32u4::ATmega32u4::LogLevel logLevel, const char* msg, const char* fileName , size_t lineNum, const char* Module);
