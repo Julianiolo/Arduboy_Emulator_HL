@@ -8,10 +8,6 @@
 
 class Arduboy {
 public:
-	typedef A32u4::ATmega32u4::LogCallB LogCallB;
-private:
-	LogCallB logCallB = A32u4::ATmega32u4::defaultLogHandler;
-public:
 	A32u4::ATmega32u4 mcu;
 	AB::Display display;
 
@@ -49,19 +45,12 @@ public:
 	void pressButtons(uint8_t buttons);
 	void releaseButtons(uint8_t buttons);
 
-	void activateLog();
-	void setLogCallB(LogCallB newLogCallB);
-
 	void updateButtons();
 
 	void getState(std::ostream& output);
 	void setState(std::istream& input);
 
 	bool operator==(const Arduboy& other) const;
-
-private:
-	static Arduboy* activeAB;
-	static void log(A32u4::ATmega32u4::LogLevel logLevel, const char* msg, const char* fileName = nullptr, int lineNum = -1, const char* Module = nullptr);
 };
 
 #endif

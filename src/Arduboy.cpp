@@ -6,9 +6,7 @@
 #include "StreamUtils.h"
 
 Arduboy::Arduboy() : display(&mcu) {
-	activateLog();
 	mcu.dataspace.setSPIByteCallB(display.spiCallB);
-	mcu.setLogCallB(log);
 }
 
 void Arduboy::reset() {
@@ -38,21 +36,6 @@ void Arduboy::updateButtons() {
 	mcu.dataspace.setBitsTo(A32u4::DataSpace::Consts::PINF, 0b11110000, (~buttonState) & (Button_Up | Button_Right | Button_Left | Button_Down));
 	mcu.dataspace.setBitTo(A32u4::DataSpace::Consts::PINE, 6, !(buttonState & Button_A));
 	mcu.dataspace.setBitTo(A32u4::DataSpace::Consts::PINB, 4, !(buttonState & Button_B));
-}
-
-Arduboy* Arduboy::activeAB = nullptr;
-void Arduboy::activateLog(){
-	activeAB = this;
-	mcu.activateLog();
-}
-void Arduboy::log(A32u4::ATmega32u4::LogLevel logLevel, const char* msg, const char* fileName , int lineNum, const char* Module){
-	MCU_ASSERT(activeAB != nullptr);
-	MCU_ASSERT(activeAB->logCallB != nullptr);
-	activeAB->logCallB(logLevel, msg,fileName,lineNum,Module);
-}
-
-void Arduboy::setLogCallB(LogCallB newLogCallB){
-	logCallB = newLogCallB;
 }
 
 void Arduboy::getState(std::ostream& output){
