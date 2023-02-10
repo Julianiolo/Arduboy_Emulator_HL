@@ -3,18 +3,12 @@
 #include <stdio.h>
 #include <string>
 
+#include "StreamUtils.h"
+
 Arduboy::Arduboy() : display(&mcu) {
 	activateLog();
 	mcu.dataspace.setSPIByteCallB(display.spiCallB);
 	mcu.setLogCallB(log);
-	mcu.setLogCallBSimple(logSimple);
-}
-
-bool Arduboy::loadFromHexString(const char* str, const char* str_end) {
-	return mcu.flash.loadFromHexString(str, str_end);
-}
-bool Arduboy::loadFromHexFile(const char* fileName) {
-	return mcu.flash.loadFromHexFile(fileName);
 }
 
 void Arduboy::reset() {
@@ -51,52 +45,36 @@ void Arduboy::activateLog(){
 	activeAB = this;
 	mcu.activateLog();
 }
-void Arduboy::log(A32u4::ATmega32u4::LogLevel logLevel, const char* msg, const char* fileName , size_t lineNum, const char* Module){
+void Arduboy::log(A32u4::ATmega32u4::LogLevel logLevel, const char* msg, const char* fileName , int lineNum, const char* Module){
 	MCU_ASSERT(activeAB != nullptr);
 	MCU_ASSERT(activeAB->logCallB != nullptr);
 	activeAB->logCallB(logLevel, msg,fileName,lineNum,Module);
 }
-void Arduboy::logSimple(A32u4::ATmega32u4::LogLevel logLevel, const char* msg){
-	MCU_ASSERT(activeAB != nullptr);
-	MCU_ASSERT(activeAB->logCallBSimple != nullptr);
-	activeAB->logCallBSimple(logLevel, msg);
-}
 
 void Arduboy::setLogCallB(LogCallB newLogCallB){
 	logCallB = newLogCallB;
-}
-void Arduboy::setLogCallBSimple(LogCallBSimple newLogCallBSimple){
-	logCallBSimple = newLogCallBSimple;
-}
-
-void Arduboy::defaultLog(A32u4::ATmega32u4::LogLevel logLevel, const char *msg, const char *fileName, size_t lineNum, const char *Module){
-	printf("[%s]%s: %s @%s:%" MCU_PRIuSIZE "\n", 
-		A32u4::ATmega32u4::logLevelStrs[logLevel],
-		Module != 0 ? (std::string("[")+Module+"]").c_str() : "",
-		msg,
-		fileName, lineNum
-	);
-}
-void Arduboy::defaultLogSimple(A32u4::ATmega32u4::LogLevel logLevel, const char *msg){
-	printf("[%s]: %s\n", 
-		A32u4::ATmega32u4::logLevelStrs[logLevel],
-		msg
-	);
 }
 
 void Arduboy::getState(std::ostream& output){
 	mcu.getState(output);
 	display.getState(output);
 
-	output << execFlags;
-	output << targetFPS;
-	output << buttonState;
+	StreamUtils::write(output, execFlags);
+	StreamUtils::write(output, targetFPS);
+	StreamUtils::write(output, buttonState);
+	StreamUtils::write(output, emulationSpeed);
 }
 void Arduboy::setState(std::istream& input){
 	mcu.setState(input);
 	display.setState(input);
 
-	input >> execFlags;
-	input >> targetFPS;
-	input >> buttonState;
+	StreamUtils::read(input, &execFlags);
+	StreamUtils::read(input, &targetFPS);
+	StreamUtils::read(input, &buttonState);
+	StreamUtils::read(input, &emulationSpeed);
+}
+bool Arduboy::operator==(const Arduboy& other) const{
+#define _CMP_(x) (x==other.x)
+	return _CMP_(mcu) && _CMP_(display) && _CMP_(execFlags) && _CMP_(targetFPS) && _CMP_(buttonState);
+#undef _CMP_
 }
