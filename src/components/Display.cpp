@@ -274,3 +274,36 @@ bool AB::Display::operator==(const Display& other) const{
 		_CMP_(currentCommandID) && _CMP_(currentCommandByte);
 #undef _CMP_
 }
+
+size_t AB::Display::sizeBytes() const {
+	size_t sum = 0;
+
+	sum += sizeof(mcu);
+	
+	sum += WIDTH * HEIGHT;
+	sum += (WIDTH * HEIGHT) / 8;
+#if AB_USE_HEAP
+	sum += sizeof(pixels);
+	sum += sizeof(pixelsRaw);
+#endif
+
+	sum += sizeof(on);
+	sum += sizeof(screenOverride);
+	sum += sizeof(screenOverrideVal);
+	sum += sizeof(invert);
+
+	sum += sizeof(startLineReg);
+	sum += sizeof(clockDevisor);
+	sum += sizeof(oscFreq);
+
+	sum += sizeof(addrPtr);
+
+	sum += sizeof(parameterStack);
+	sum += sizeof(parameterStackPointer);
+	sum += sizeof(isRecivingParameters);
+
+	sum += sizeof(currentCommandID);
+	sum += sizeof(currentCommandByte);
+
+	return sum;
+}

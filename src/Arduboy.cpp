@@ -61,3 +61,19 @@ bool Arduboy::operator==(const Arduboy& other) const{
 	return _CMP_(mcu) && _CMP_(display) && _CMP_(execFlags) && _CMP_(targetFPS) && _CMP_(buttonState);
 #undef _CMP_
 }
+
+size_t Arduboy::sizeBytes() const {
+	size_t sum = 0;
+
+	sum += mcu.sizeBytes();
+	sum += display.sizeBytes();
+
+	sum += sizeof(execFlags);
+	sum += sizeof(targetFPS);
+
+	sum += sizeof(buttonState);
+
+	sum += sizeof(emulationSpeed);
+
+	return sum;
+}

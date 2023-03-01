@@ -113,7 +113,14 @@ namespace AB {
 		void setState(std::istream& input);
 
 		bool operator==(const Display& other) const;
+		size_t sizeBytes() const;
 	};
+}
+
+namespace DataUtils {
+	inline size_t approxSizeOf(const AB::Display& v) {
+		return v.sizeBytes();
+	}
 }
 
 #endif

@@ -51,6 +51,13 @@ public:
 	void setState(std::istream& input);
 
 	bool operator==(const Arduboy& other) const;
+	size_t sizeBytes() const;
 };
+
+namespace DataUtils {
+	inline size_t approxSizeOf(const Arduboy& v) {
+		return v.sizeBytes();
+	}
+}
 
 #endif
