@@ -17,7 +17,7 @@ void Arduboy::reset() {
 void Arduboy::newFrame() {
 	updateButtons();
 	display.activate();
-	mcu.execute((uint64_t)(cycsPerFrame() * emulationSpeed), execFlags);
+	mcu.execute((uint64_t)(cycsPerFrame() * emulationSpeed), debug);
 	display.update();
 }
 
@@ -42,7 +42,7 @@ void Arduboy::getState(std::ostream& output){
 	mcu.getState(output);
 	display.getState(output);
 
-	StreamUtils::write(output, execFlags);
+	StreamUtils::write(output, debug);
 	StreamUtils::write(output, targetFPS);
 	StreamUtils::write(output, buttonState);
 	StreamUtils::write(output, emulationSpeed);
@@ -51,14 +51,14 @@ void Arduboy::setState(std::istream& input){
 	mcu.setState(input);
 	display.setState(input);
 
-	StreamUtils::read(input, &execFlags);
+	StreamUtils::read(input, &debug);
 	StreamUtils::read(input, &targetFPS);
 	StreamUtils::read(input, &buttonState);
 	StreamUtils::read(input, &emulationSpeed);
 }
 bool Arduboy::operator==(const Arduboy& other) const{
 #define _CMP_(x) (x==other.x)
-	return _CMP_(mcu) && _CMP_(display) && _CMP_(execFlags) && _CMP_(targetFPS) && _CMP_(buttonState);
+	return _CMP_(mcu) && _CMP_(display) && _CMP_(debug) && _CMP_(targetFPS) && _CMP_(buttonState);
 #undef _CMP_
 }
 
@@ -68,7 +68,7 @@ size_t Arduboy::sizeBytes() const {
 	sum += mcu.sizeBytes();
 	sum += display.sizeBytes();
 
-	sum += sizeof(execFlags);
+	sum += sizeof(debug);
 	sum += sizeof(targetFPS);
 
 	sum += sizeof(buttonState);

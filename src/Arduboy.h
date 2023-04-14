@@ -11,7 +11,7 @@ public:
 	A32u4::ATmega32u4 mcu;
 	AB::Display display;
 
-	uint8_t execFlags = A32u4::ATmega32u4::ExecFlags_None;
+	bool debug = true;
 	uint16_t targetFPS = 60;
 
 	uint8_t buttonState = 0;
