@@ -36,6 +36,8 @@ public:
 	float emulationSpeed = 1;
 
 	Arduboy();
+	Arduboy(const Arduboy& src);
+	Arduboy& operator=(const Arduboy& src);
 
 	void reset();
 

@@ -9,12 +9,15 @@
 
 #include "ATmega32u4.h"
 
+class Arduboy;
+
 namespace AB {
 	class Display { //mimics the SSD1306 https://cdn-shop.adafruit.com/datasheets/SSD1306.pdf
 	public:
 		static constexpr uint8_t WIDTH = 128;
 		static constexpr uint8_t HEIGHT = 64;
 	private:
+		friend Arduboy;
 		A32u4::ATmega32u4* mcu;
 
 #if !AB_USE_HEAP

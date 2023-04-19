@@ -8,6 +8,23 @@
 Arduboy::Arduboy() : display(&mcu) {
 	mcu.dataspace.setSPIByteCallB(display.spiCallB);
 }
+Arduboy::Arduboy(const Arduboy& src) : mcu(src.mcu), display(src.display),
+debug(src.debug), targetFPS(src.targetFPS), buttonState(src.buttonState), emulationSpeed(src.emulationSpeed)
+{
+	display.mcu = &mcu;
+}
+Arduboy& Arduboy::operator=(const Arduboy& src) {
+	mcu = src.mcu;
+	display = src.display;
+	display.mcu = &mcu;
+
+	debug = src.debug;
+	targetFPS = src.targetFPS;
+
+	buttonState = src.buttonState;
+	emulationSpeed = src.emulationSpeed;
+	return *this;
+}
 
 void Arduboy::reset() {
 	mcu.reset();
