@@ -3,6 +3,8 @@
 
 #include "StreamUtils.h"
 
+#define LU_MODULE "Display"
+
 AB::Display::Display(A32u4::ATmega32u4* mcu) : mcu(mcu)
 #if AB_USE_HEAP
 ,pixels(WIDTH*HEIGHT), pixelsRaw((WIDTH*HEIGHT)/8)
@@ -41,8 +43,8 @@ void AB::Display::reciveCommandByte(uint8_t byte) {
 		currentCommandByte = byte;
 		currentCommandID = getCommandInd(byte);
 		if (currentCommandID == 255) {
-			std::cout << "cant find display command id for: " << (int)byte << std::endl;
-			abort();
+			LU_LOGF(LogUtils::LogLevel_Error, "cant find display command id for: %" PRIu8, byte);
+			return;
 		}
 		if (commands[currentCommandID].paramAmt == 0)
 			handleCurrentCommand();
@@ -139,8 +141,8 @@ void AB::Display::handleCommand(uint8_t byte, uint8_t id) {
 			break;
 
 		default:
-			std::cout << "Unhandled Display Command: " << (int)byte << " ID: " << (int)id << std::endl;
-			abort();
+			LU_LOGF(LogUtils::LogLevel_Error, "Unhandled Display Command: %" PRIu8 " ID: %" PRIu8, byte, id);
+			return;
 	}
 }
 void AB::Display::handleCurrentCommand() {
