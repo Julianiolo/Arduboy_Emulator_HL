@@ -4,6 +4,7 @@
 #include <string>
 
 #include "StreamUtils.h"
+#include "DataUtils.h"
 
 Arduboy::Arduboy() : display(&mcu) {
 	mcu.dataspace.setSPIByteCallB(display.spiCallB);
@@ -93,4 +94,19 @@ size_t Arduboy::sizeBytes() const {
 	sum += sizeof(emulationSpeed);
 
 	return sum;
+}
+
+uint32_t Arduboy::hash() const noexcept {
+	uint32_t h = 0;
+	DU_HASHC(h, mcu);
+	DU_HASHC(h, display);
+
+	DU_HASHC(h,debug);
+	DU_HASHC(h,targetFPS);
+
+	DU_HASHC(h,buttonState);
+
+	DU_HASHC(h,emulationSpeed);
+
+	return h;
 }

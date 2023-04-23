@@ -2,6 +2,7 @@
 #include <iostream>
 
 #include "StreamUtils.h"
+#include "DataUtils.h"
 
 #define LU_MODULE "Display"
 
@@ -309,3 +310,31 @@ size_t AB::Display::sizeBytes() const {
 
 	return sum;
 }
+
+uint32_t AB::Display::hash() const noexcept {
+	uint32_t h = 0;
+
+	DU_HASHCC(h, pixels);
+	DU_HASHCC(h, pixelsRaw);
+
+	DU_HASHC(h, on);
+	DU_HASHC(h, screenOverride);
+	DU_HASHC(h, screenOverrideVal);
+	DU_HASHC(h, invert);
+
+	DU_HASHC(h, startLineReg);
+	DU_HASHC(h, clockDevisor);
+	DU_HASHC(h, oscFreq);
+
+	DU_HASHC(h, addrPtr);
+
+	DU_HASHCC(h, parameterStack);
+	DU_HASHC(h, parameterStackPointer);
+	DU_HASHC(h, isRecivingParameters);
+
+	DU_HASHC(h, currentCommandID);
+	DU_HASHC(h, currentCommandByte);
+
+	return h;
+}
+

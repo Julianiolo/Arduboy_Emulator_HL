@@ -117,6 +117,7 @@ namespace AB {
 
 		bool operator==(const Display& other) const;
 		size_t sizeBytes() const;
+		uint32_t hash() const noexcept;
 	};
 }
 
@@ -125,5 +126,12 @@ namespace DataUtils {
 		return v.sizeBytes();
 	}
 }
+
+template<>
+struct std::hash<AB::Display>{
+	inline std::size_t operator()(const AB::Display& v) const noexcept{
+		return (size_t)v.hash();
+	}
+};
 
 #endif

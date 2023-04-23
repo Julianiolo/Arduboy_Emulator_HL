@@ -54,6 +54,7 @@ public:
 
 	bool operator==(const Arduboy& other) const;
 	size_t sizeBytes() const;
+	uint32_t hash() const noexcept;
 };
 
 namespace DataUtils {
@@ -61,5 +62,12 @@ namespace DataUtils {
 		return v.sizeBytes();
 	}
 }
+
+template<>
+struct std::hash<Arduboy>{
+	inline std::size_t operator()(const Arduboy& v) const noexcept{
+		return (size_t)v.hash();
+	}
+};
 
 #endif
