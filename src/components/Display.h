@@ -104,13 +104,10 @@ namespace AB {
 
 		void reset();
 
-		void activate();
+		void setCallB();
 		void update();
 
 		bool& getPixel(uint8_t x, uint8_t y);
-
-		static Display* activeDisplay;
-		static void spiCallB(uint8_t data);
 
 		void getState(std::ostream& output);
 		void setState(std::istream& input);

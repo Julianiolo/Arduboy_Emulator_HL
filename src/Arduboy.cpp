@@ -7,7 +7,7 @@
 #include "DataUtils.h"
 
 Arduboy::Arduboy() : display(&mcu) {
-	mcu.dataspace.setSPIByteCallB(display.spiCallB);
+	
 }
 Arduboy::Arduboy(const Arduboy& src) : mcu(src.mcu), display(src.display),
 debug(src.debug), targetFPS(src.targetFPS), buttonState(src.buttonState), emulationSpeed(src.emulationSpeed)
@@ -34,7 +34,6 @@ void Arduboy::reset() {
 
 void Arduboy::newFrame() {
 	updateButtons();
-	display.activate();
 	mcu.execute((uint64_t)(cycsPerFrame() * emulationSpeed), debug);
 	display.update();
 }

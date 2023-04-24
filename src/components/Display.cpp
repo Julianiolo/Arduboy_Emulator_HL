@@ -11,7 +11,7 @@ AB::Display::Display(A32u4::ATmega32u4* mcu) : mcu(mcu)
 ,pixels(WIDTH*HEIGHT), pixelsRaw((WIDTH*HEIGHT)/8)
 #endif
 {
-	activate();
+	setCallB();
 }
 
 void AB::Display::reset() {
@@ -173,8 +173,8 @@ bool AB::Display::isDataMode() {
 	return (mcu->dataspace.getDataByte(A32u4::DataSpace::Consts::PORTD) & (1<<4)) != 0;
 }
 
-void AB::Display::activate() {
-	activeDisplay = this;
+void AB::Display::setCallB() {
+	mcu->dataspace.setSPIByteCallB([=](uint8_t data){ reciveSPIByte(data);});
 }
 void AB::Display::update() {
 	if (!on) {
@@ -215,11 +215,6 @@ void AB::Display::update() {
 
 bool& AB::Display::getPixel(uint8_t x, uint8_t y) {
 	return (bool&)pixels[y * WIDTH + x];
-}
-
-AB::Display* AB::Display::activeDisplay;
-void AB::Display::spiCallB(uint8_t data) {
-	activeDisplay->reciveSPIByte(data);
 }
 
 void AB::Display::getState(std::ostream& output){
