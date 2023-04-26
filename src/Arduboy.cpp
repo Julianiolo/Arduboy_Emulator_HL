@@ -7,15 +7,17 @@
 #include "DataUtils.h"
 
 Arduboy::Arduboy() : display(&mcu) {
-	
+	mcu.setPinChangeCallB(genPinChangeFunc());
 }
 Arduboy::Arduboy(const Arduboy& src) : mcu(src.mcu), display(src.display),
 debug(src.debug), targetFPS(src.targetFPS), buttonState(src.buttonState), emulationSpeed(src.emulationSpeed)
 {
+	mcu.setPinChangeCallB(genPinChangeFunc());
 	display.mcu = &mcu;
 }
 Arduboy& Arduboy::operator=(const Arduboy& src) {
 	mcu = src.mcu;
+	mcu.setPinChangeCallB(genPinChangeFunc());
 	display = src.display;
 	display.mcu = &mcu;
 
@@ -26,6 +28,19 @@ Arduboy& Arduboy::operator=(const Arduboy& src) {
 	emulationSpeed = src.emulationSpeed;
 	return *this;
 }
+
+std::function<void(uint8_t pinReg, reg_t oldVal, reg_t val)> Arduboy::genPinChangeFunc(){
+	return [&] (uint8_t pinReg, reg_t oldVal, reg_t val) {
+		if(pinReg == A32u4::ATmega32u4::PinChange_PORTC) {
+			bool plus = !!(val & (1 << 6));
+			bool minus = !!(val & (1 << 7));
+			bool oldPlus = !!(oldVal & (1 << 6));
+			bool oldMinus = !!(oldVal & (1 << 7));
+			sound.registerSoundPin(mcu.cpu.getTotalCycles(), plus, minus, oldPlus, oldMinus);
+		}
+	};
+}
+
 
 void Arduboy::reset() {
 	mcu.reset();

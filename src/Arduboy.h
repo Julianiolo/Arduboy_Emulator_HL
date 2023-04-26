@@ -5,11 +5,13 @@
 
 #include "ATmega32u4.h"
 #include "components/Display.h"
+#include "components/Sound.h"
 
 class Arduboy {
 public:
 	A32u4::ATmega32u4 mcu;
 	AB::Display display;
+	AB::Sound sound;
 
 	bool debug = true;
 	uint16_t targetFPS = 60;
@@ -34,6 +36,10 @@ public:
 	};
 
 	float emulationSpeed = 1;
+
+private:
+	std::function<void(uint8_t pinReg, reg_t oldVal, reg_t val)> genPinChangeFunc();
+public:
 
 	Arduboy();
 	Arduboy(const Arduboy& src);
