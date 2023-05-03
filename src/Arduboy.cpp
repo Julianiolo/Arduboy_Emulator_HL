@@ -45,6 +45,7 @@ std::function<void(uint8_t pinReg, reg_t oldVal, reg_t val)> Arduboy::genPinChan
 void Arduboy::reset() {
 	mcu.reset();
 	display.reset();
+	sound.reset();
 }
 
 void Arduboy::newFrame() {

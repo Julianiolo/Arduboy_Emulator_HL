@@ -4,6 +4,12 @@ AB::Sound::Sound() {
     buffer.push_back({ false, false, 0 });
 }
 
+void AB::Sound::reset() {
+    bufferStart = 0;
+    buffer.clear();
+    buffer.push_back({ false, false, 0 });
+}
+
 void AB::Sound::registerSoundPin(uint64_t totalCyls, bool plus, bool minus, bool oldPlus, bool oldMinus) {
     if(plus == oldPlus && minus == oldMinus)
         return;
