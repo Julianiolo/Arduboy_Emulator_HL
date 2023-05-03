@@ -14,6 +14,9 @@ namespace AB {
             uint64_t offset;
         };
         std::vector<Sample> buffer;
+
+        Sound();
+
         void registerSoundPin(uint64_t totalCyls,bool plus, bool minus, bool oldPlus, bool oldMinus);
         void clearBuffer(uint64_t totalCycs);
     };

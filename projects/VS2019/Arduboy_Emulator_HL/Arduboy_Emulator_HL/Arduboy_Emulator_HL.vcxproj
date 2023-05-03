@@ -21,10 +21,12 @@
   <ItemGroup>
     <ClCompile Include="..\..\..\..\src\Arduboy.cpp" />
     <ClCompile Include="..\..\..\..\src\components\Display.cpp" />
+    <ClCompile Include="..\..\..\..\src\components\Sound.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\src\Arduboy.h" />
     <ClInclude Include="..\..\..\..\src\components\Display.h" />
+    <ClInclude Include="..\..\..\..\src\components\Sound.h" />
     <ClInclude Include="..\..\..\..\src\config.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
