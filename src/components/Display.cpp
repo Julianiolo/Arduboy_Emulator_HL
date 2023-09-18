@@ -151,12 +151,74 @@ void AB::Display::handleCurrentCommand() {
 }
 
 uint8_t AB::Display::getCommandInd(uint8_t firstByte) {
+#if 0
 	for (uint8_t i = 0; i < commands.size(); i++) {
 		auto& c = commands[i];
 		if ((firstByte & c.idMask) == c.id) {
 			return i;
 		}
 	}
+#else
+	constexpr size_t problemCmdInd = 15; // only command which only has first 2 bits constant
+	constexpr auto problemCmd = commands[problemCmdInd];
+	DU_STATIC_ASSERT(problemCmd.idMask == 0xC0);
+
+	DU_IF_UNLIKELY((firstByte & problemCmd.idMask) == problemCmd.id) {
+		return problemCmdInd;
+	}
+
+	switch (firstByte & 0xf0) {
+		case 0b0000 << 4: return 9;
+		case 0b0001 << 4: return 10;
+		case 0b0010 << 4:
+			switch (firstByte & 0xf) {
+				case 0b0000: return 11;
+				case 0b0001: return 12;
+				case 0b0010: return 13;
+				case 0b0110:
+				case 0b0111:
+					return 4;
+				case 0b1000:
+				case 0b1001:
+				case 0b1010:
+				case 0b1011:
+					return 5;
+				case 0b1110:
+					return 6;
+				case 0b1111:
+					return 7;
+				default: return 0xff;
+			}
+		case 0b1000 << 4:
+			switch (firstByte & 0xf) {
+				case 0b0001: return 0;
+				case 0b1101: return 25;
+				default: return 0xff;
+			}
+		case 0b1010 << 4:
+			switch (firstByte & 0b1110) {
+				case 0b000 << 1: return 16;
+				case 0b001 << 1: return 8;
+				case 0b010 << 1: return 1;
+				case 0b011 << 1: return 2;
+				case 0b111 << 1: return 3;
+				case 0b100 << 1: return 17;
+				default: return 0xff;
+			}
+		case 0b1100 << 4: return 18;
+		case 0b1101 << 4:
+			switch (firstByte & 0xf) {
+				case 0b0011: return 19;
+				case 0b1010: return 20;
+				case 0b0101: return 21;
+				case 0b1001: return 22;
+				case 0b1011: return 23;
+				default: return 0xff;
+			}
+		case 0b1110 << 4: return 24;
+		default: return 0xff;
+	}
+#endif
 	return 0xFF;
 }
 
