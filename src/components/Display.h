@@ -46,37 +46,37 @@ namespace AB {
 
 		static constexpr std::array<Command,26> commands = {
 			// fundamental commands
-			Command{0b10000001,0xFF,1}, // set contrast control
-			Command{0b10100100,0xFE,0}, // entire display on
-			Command{0b10100110,0xFE,0}, // set normal/inverse display
-			Command{0b10101110,0xFE,0}, // set display on/off
+			Command{0b10000001,0xFF,1}, //  0: set contrast control
+			Command{0b10100100,0xFE,0}, //  1: entire display on
+			Command{0b10100110,0xFE,0}, //  2: set normal/inverse display
+			Command{0b10101110,0xFE,0}, //  3: set display on/off
 			// scrolling commands
-			Command{0b00100110,0xFE,6}, // continuous horizontal scroll setup
-			Command{0b00101000,0xFC,5}, // continuous vertical and horizontal scroll setup
-			Command{0b00101110,0xFF,0}, // disable scroll
-			Command{0b00101111,0xFF,0}, // activate scroll
-			Command{0b10100011,0xFF,2}, // set vertical scroll area
+			Command{0b00100110,0xFE,6}, //  4: continuous horizontal scroll setup
+			Command{0b00101000,0xFC,5}, //  5: continuous vertical and horizontal scroll setup
+			Command{0b00101110,0xFF,0}, //  6: disable scroll
+			Command{0b00101111,0xFF,0}, //  7: activate scroll
+			Command{0b10100011,0xFF,2}, //  8: set vertical scroll area
 			// addressing settings
-			Command{0b00000000,0xF0,0}, // set lower column start address for page addressing mode
-			Command{0b00010000,0xF0,0}, // set higher column start address for page addressing mode
-			Command{0b00100000,0xF0,1}, // set memory addressing mode
-			Command{0b00100001,0xFF,2}, // set column adress
-			Command{0b00100010,0xFF,2}, // set page address
-			Command{0b10110000,0xF8,0}, // set page start address for page addressing mode
+			Command{0b00000000,0xF0,0}, //  9: set lower column start address for page addressing mode
+			Command{0b00010000,0xF0,0}, // 10: set higher column start address for page addressing mode
+			Command{0b00100000,0xFF,1}, // 11: set memory addressing mode
+			Command{0b00100001,0xFF,2}, // 12: set column adress
+			Command{0b00100010,0xFF,2}, // 13: set page address
+			Command{0b10110000,0xF8,0}, // 14: set page start address for page addressing mode
 			// hardware configuration
-			Command{0b01000000,0xC0,0}, // set display start size
-			Command{0b10100000,0xFE,0}, // set segment re-map
-			Command{0b10101000,0xFF,1}, // set multiplex ratio
-			Command{0b11000000,0xF7,0}, // set com output scan direction
-			Command{0b11010011,0xFF,1}, // set display offset
-			Command{0b11011010,0xFF,0}, // set com pins hardware configuration
+			Command{0b01000000,0xC0,0}, // 15: set display start size
+			Command{0b10100000,0xFE,0}, // 16: set segment re-map
+			Command{0b10101000,0xFF,1}, // 17: set multiplex ratio
+			Command{0b11000000,0xF7,0}, // 18: set com output scan direction
+			Command{0b11010011,0xFF,1}, // 19: set display offset
+			Command{0b11011010,0xFF,0}, // 20: set com pins hardware configuration
 			// timing & driving scheme settings
-			Command{0b11010101,0xFF,1}, // set display clock divide ratio/oscillator frequency
-			Command{0b11011001,0xFF,1}, // set pre-charge period
-			Command{0b11011011,0xFF,1}, // set Vcomh Deselect Level
-			Command{0b11100011,0xFF,0}, // NOP
+			Command{0b11010101,0xFF,1}, // 21: set display clock divide ratio/oscillator frequency
+			Command{0b11011001,0xFF,1}, // 22: set pre-charge period
+			Command{0b11011011,0xFF,1}, // 23: set Vcomh Deselect Level
+			Command{0b11100011,0xFF,0}, // 24: NOP
 
-			Command{0b10001101,0xFF,1}, // charge pump regulator
+			Command{0b10001101,0xFF,1}, // 25:  charge pump regulator
 		};
 
 		
