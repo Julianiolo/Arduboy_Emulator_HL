@@ -163,7 +163,7 @@ uint8_t AB::Display::getCommandInd(uint8_t firstByte) {
 	constexpr auto problemCmd = commands[problemCmdInd];
 	DU_STATIC_ASSERT(problemCmd.idMask == 0xC0);
 
-	DU_IF_UNLIKELY((firstByte & problemCmd.idMask) == problemCmd.id) {
+	CU_IF_UNLIKELY((firstByte & problemCmd.idMask) == problemCmd.id) {
 		return problemCmdInd;
 	}
 
