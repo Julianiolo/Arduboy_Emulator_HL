@@ -275,7 +275,7 @@ void AB::Display::update() {
 #endif
 }
 
-bool& AB::Display::getPixel(uint8_t x, uint8_t y) {
+bool& AB::Display::getPixel(uint8_t x, uint8_t y) const {
 	return (bool&)pixels[y * WIDTH + x];
 }
 

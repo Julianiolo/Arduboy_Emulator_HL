@@ -107,7 +107,7 @@ namespace AB {
 		void setCallB();
 		void update();
 
-		bool& getPixel(uint8_t x, uint8_t y);
+		bool& getPixel(uint8_t x, uint8_t y) const;
 
 		void getState(std::ostream& output);
 		void setState(std::istream& input);
