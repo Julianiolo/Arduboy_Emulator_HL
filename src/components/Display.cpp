@@ -1,5 +1,6 @@
 #include "Display.h"
-#include <iostream>
+
+#include "../Arduboy.h"
 
 #include "StreamUtils.h"
 #include "DataUtils.h"
@@ -7,7 +8,7 @@
 
 #define LU_MODULE "Display"
 
-AB::Display::Display(avr_t* avr) : avr(avr)
+AB::Display::Display(Arduboy* ab) : ab(ab)
 #if AB_USE_HEAP
 ,pixels(WIDTH*HEIGHT), pixelsRaw((WIDTH*HEIGHT)/8)
 #endif
@@ -233,11 +234,18 @@ void AB::Display::stopRecivingParams() {
 
 
 bool AB::Display::isDataMode() {
-	return (mcu->dataspace.getDataByte(A32u4::DataSpace::Consts::PORTD) & (1<<4)) != 0;
+	return is_in_data_mode;
 }
 
 void AB::Display::setCallB() {
-	mcu->dataspace.setSPIByteCallB([=](uint8_t data){ reciveSPIByte(data);});
+	avr_irq_register_notify(&ab->irqs[Arduboy::IRQ_SPI], [](struct avr_irq_t * irq, uint32_t value, void* u_data) {
+		auto _this = (Display*)u_data;
+		_this->reciveSPIByte((uint8_t)value);
+	}, this);
+	avr_irq_register_notify(&ab->irqs[Arduboy::IRQ_PORTD], [](struct avr_irq_t * irq, uint32_t value, void* u_data) {
+		auto _this = (Display*)u_data;
+		_this->is_in_data_mode = !!value;
+	}, this);
 }
 void AB::Display::update() {
 	if (!on) {
@@ -339,7 +347,7 @@ bool AB::Display::operator==(const Display& other) const{
 size_t AB::Display::sizeBytes() const {
 	size_t sum = 0;
 
-	sum += sizeof(mcu);
+	sum += sizeof(ab);
 	
 	sum += WIDTH * HEIGHT;
 	sum += (WIDTH * HEIGHT) / 8;

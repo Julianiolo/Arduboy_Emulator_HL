@@ -2,37 +2,53 @@
 
 #include <stdio.h>
 #include <string>
+#include <iostream>
 
 #include "StreamUtils.h"
 #include "DataUtils.h"
 
+#include "simavr/sim/avr_ioport.h"
+
 static avr_t* setup_avr() {
-	avr_t* avr = avr_make_mcu_by_name("Atmega32u4");
+	avr_t* avr = avr_make_mcu_by_name("atmega32u4");
 	avr_init(avr);
 	
 	return avr;
 }
 
 static avr_irq_t* setup_avr_callbacks(avr_t* avr) {
-	const char* names[] = {"A", "B"};
-	avr_irq_t* irq = avr_alloc_irq(&avr->irq_pool, 0, 2, names);
-	return irq;
+	const char* names[] = {"btn_pinf", "btn_pine", "btn_pinb"};
+	avr_irq_t* irqs = avr_alloc_irq(&avr->irq_pool, 0, Arduboy::IRQ__COUNT, names);
+
+	avr_connect_irq(&irqs[Arduboy::IRQ_PORTF], avr_io_getirq(avr, AVR_IOCTL_IOPORT_GETIRQ('F'), 0));
+	avr_connect_irq(&irqs[Arduboy::IRQ_PORTE], avr_io_getirq(avr, AVR_IOCTL_IOPORT_GETIRQ('E'), 0));
+	avr_connect_irq(&irqs[Arduboy::IRQ_PORTB], avr_io_getirq(avr, AVR_IOCTL_IOPORT_GETIRQ('B'), 0));
+	avr_connect_irq(&irqs[Arduboy::IRQ_PORTD], avr_io_getirq(avr, AVR_IOCTL_IOPORT_GETIRQ('D'), 0));
+	avr_connect_irq(&irqs[Arduboy::IRQ_SPI], avr_io_getirq(avr, AVR_IOCTL_IOPORT_GETIRQ('B'), 0));
+	return irqs;
 }
 
-Arduboy::Arduboy() : avr(setup_avr()), irqs(setup_avr_callbacks(avr)), display(avr) {
-	mcu.setPinChangeCallB(genPinChangeFunc());
+Arduboy::Arduboy() : avr(setup_avr()), irqs(setup_avr_callbacks(avr)), display(this) {
 }
-Arduboy::Arduboy(const Arduboy& src) : avr(avr), display(src.display),
+Arduboy::Arduboy(const Arduboy& src) : avr(src.avr), irqs(setup_avr_callbacks(avr)), display(src.display),
 debug(src.debug), targetFPS(src.targetFPS), buttonState(src.buttonState), emulationSpeed(src.emulationSpeed)
 {
-	mcu.setPinChangeCallB(genPinChangeFunc());
-	display.avr = avr;
+	std::terminate();
+	display.ab = this;
+}
+Arduboy::~Arduboy() {
+	avr_free_irq(irqs, IRQ__COUNT);
+	irqs = NULL;
+	avr_terminate(avr);
+	avr = NULL;
 }
 Arduboy& Arduboy::operator=(const Arduboy& src) {
 	avr = src.avr; // TODO actually copy
-	mcu.setPinChangeCallB(genPinChangeFunc());
+	avr_free_irq(irqs, IRQ__COUNT);
+	irqs = NULL;
+	irqs = setup_avr_callbacks(avr);
 	display = src.display;
-	display.mcu = &mcu;
+	display.ab = this;
 
 	debug = src.debug;
 	targetFPS = src.targetFPS;
@@ -42,33 +58,29 @@ Arduboy& Arduboy::operator=(const Arduboy& src) {
 	return *this;
 }
 
-std::function<void(uint8_t pinReg, reg_t oldVal, reg_t val)> Arduboy::genPinChangeFunc(){
-	return [&] (uint8_t pinReg, reg_t oldVal, reg_t val) {
-		if(pinReg == A32u4::ATmega32u4::PinChange_PORTC) {
-			bool plus = !!(val & (1 << 6));
-			bool minus = !!(val & (1 << 7));
-			bool oldPlus = !!(oldVal & (1 << 6));
-			bool oldMinus = !!(oldVal & (1 << 7));
-			sound.registerSoundPin(mcu.cpu.getTotalCycles(), plus, minus, oldPlus, oldMinus);
-		}
-	};
-}
-
-
 void Arduboy::reset() {
-	mcu.reset();
+	avr_reset(avr);
 	display.reset();
 	sound.reset();
 }
 
-void Arduboy::newFrame() {
+void Arduboy::runForCycs(uint64_t num_cycs) {
 	updateButtons();
-	mcu.execute((uint64_t)(cycsPerFrame() * emulationSpeed), debug);
+
+	uint64_t end_cycs = avr->cycle + num_cycs;
+	while(avr->cycle < end_cycs) {
+		avr_run(avr);
+		std::cout << avr->pc << " " << avr->cycle << "\n";
+	}
+	
 	display.update();
+}
+void Arduboy::newFrame() {
+	runForCycs((uint64_t)(cycsPerFrame() * emulationSpeed));
 }
 
 uint64_t Arduboy::cycsPerFrame() const{
-	return A32u4::CPU::ClockFreq/targetFPS;
+	return avr->frequency/targetFPS;
 }
 
 void Arduboy::pressButtons(uint8_t buttons) {
@@ -79,13 +91,13 @@ void Arduboy::releaseButtons(uint8_t buttons) {
 }
 
 void Arduboy::updateButtons() {
-	mcu.dataspace.setBitsTo(A32u4::DataSpace::Consts::PINF, 0b11110000, (~buttonState) & (Button_Up | Button_Right | Button_Left | Button_Down));
-	mcu.dataspace.setBitTo(A32u4::DataSpace::Consts::PINE, 6, !(buttonState & Button_A));
-	mcu.dataspace.setBitTo(A32u4::DataSpace::Consts::PINB, 4, !(buttonState & Button_B));
+	avr_raise_irq(&irqs[Arduboy::IRQ_PORTF], (~buttonState) & (Button_Up | Button_Right | Button_Left | Button_Down)); // mask: 0b11110000
+	avr_raise_irq(&irqs[Arduboy::IRQ_PORTE], ~(buttonState & Button_A)); // bit: 6
+	avr_raise_irq(&irqs[Arduboy::IRQ_PORTB], ~(buttonState & Button_B)); // bit: 4
 }
 
 void Arduboy::getState(std::ostream& output){
-	mcu.getState(output);
+	//mcu.getState(output); // TODO
 	display.getState(output);
 
 	StreamUtils::write(output, debug);
@@ -94,7 +106,7 @@ void Arduboy::getState(std::ostream& output){
 	StreamUtils::write(output, emulationSpeed);
 }
 void Arduboy::setState(std::istream& input){
-	mcu.setState(input);
+	// mcu.setState(input); // TODO
 	display.setState(input);
 
 	StreamUtils::read(input, &debug);
@@ -103,15 +115,16 @@ void Arduboy::setState(std::istream& input){
 	StreamUtils::read(input, &emulationSpeed);
 }
 bool Arduboy::operator==(const Arduboy& other) const{
+	// TODO
 #define _CMP_(x) (x==other.x)
-	return _CMP_(mcu) && _CMP_(display) && _CMP_(debug) && _CMP_(targetFPS) && _CMP_(buttonState);
+	return true && _CMP_(display) && _CMP_(debug) && _CMP_(targetFPS) && _CMP_(buttonState);
 #undef _CMP_
 }
 
 size_t Arduboy::sizeBytes() const {
 	size_t sum = 0;
 
-	sum += mcu.sizeBytes();
+	// sum += mcu.sizeBytes();  // TODO
 	sum += display.sizeBytes();
 
 	sum += sizeof(debug);
@@ -126,7 +139,7 @@ size_t Arduboy::sizeBytes() const {
 
 uint32_t Arduboy::hash() const noexcept {
 	uint32_t h = 0;
-	DU_HASHC(h, mcu);
+	//DU_HASHC(h, mcu);  // TODO
 	DU_HASHC(h, display);
 
 	DU_HASHC(h,debug);

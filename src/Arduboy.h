@@ -39,9 +39,14 @@ public:
 
 	float emulationSpeed = 1;
 
-private:
-	std::function<void(uint8_t pinReg, uint8_t oldVal, uint8_t val)> genPinChangeFunc();
-public:
+	enum {
+		IRQ_PORTF = 0,
+		IRQ_PORTE,
+		IRQ_PORTB,
+		IRQ_SPI,
+		IRQ_PORTD,
+		IRQ__COUNT
+	};
 
 	Arduboy();
 	Arduboy(const Arduboy& src);
@@ -50,6 +55,7 @@ public:
 
 	void reset();
 
+	void runForCycs(uint64_t num_cycs);
 	void newFrame();
 	uint64_t cycsPerFrame() const;
 

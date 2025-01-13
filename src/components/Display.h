@@ -4,10 +4,9 @@
 #include <stdint.h>
 #include <array>
 #include <vector>
+#include <iostream>
 
 #include "../config.h"
-
-#include "simavr/sim/sim_avr.h"
 
 #define LU_CONTEXT {}
 
@@ -20,7 +19,7 @@ namespace AB {
 		static constexpr uint8_t HEIGHT = 64;
 	private:
 		friend Arduboy;
-		avr_t* avr;
+		Arduboy* ab;
 #if !AB_USE_HEAP
 		std::array<uint8_t,WIDTH*HEIGHT> pixels;
 		std::array<uint8_t,(WIDTH*HEIGHT)/8> pixelsRaw;
@@ -32,6 +31,8 @@ namespace AB {
 		bool screenOverride = false;
 		bool screenOverrideVal = false;
 		bool invert = false;
+
+		bool is_in_data_mode = false;
 
 		uint8_t startLineReg = 0;
 		uint8_t clockDevisor = 1;
@@ -101,7 +102,7 @@ namespace AB {
 		void startRecivingParams();
 		void stopRecivingParams();
 	public:
-		Display(avr_t* avr);
+		Display(Arduboy* ab);
 
 		void reset();
 

@@ -57,7 +57,7 @@ SRC_FILES:=$(shell find $(SRC_DIR) -name '*.cpp')
 OBJ_FILES:=$(addprefix $(OBJ_DIR),${SRC_FILES:.cpp=.o})
 DEP_FILES:=$(patsubst %.o,%.d,$(OBJ_FILES))
 
-DEPENDENCIES_INCLUDE_PATHS:=dependencies/CPP_Utils/src dependencies/simavr/
+DEPENDENCIES_INCLUDE_PATHS:=dependencies/CPP_Utils/src dependencies/simavr
 DEPENDENCIES_LIBS_DIR:=$(BUILD_DIR)dependencies/libs
 
 DEP_LIBS_DIRS:=$(addprefix $(DEPENDENCIES_DIR),CPP_Utils/)
@@ -88,7 +88,7 @@ $(OBJ_DIR)%.o:%.cpp
 
 deps:
 	$(MAKE) -C $(DEP_LIBS_DIRS) PLATFORM=$(PLATFORM) BUILD_MODE=$(BUILD_MODE) "RELEASE_OPTIM=$(RELEASE_OPTIM)" BUILD_DIR=$(DEP_BUILD_DIR) CUSTOM_CFLAGS="$(CUSTOM_CFLAGS)" CUSTOM_CXXFLAGS="$(CUSTOM_CXXFLAGS)" CSTD="$(CSTD)" CXXSTD="$(CXXSTD)"
-	$(MAKE) -C $(DEPENDENCIES_DIR)simavr build-simavr CSTD="$(CSTD)" CXXSTD="$(CXXSTD)" CFLAGS="-Wno-char-subscripts"
+	$(MAKE) -C $(DEPENDENCIES_DIR)simavr/simavr libsimavr CSTD="$(CSTD)" CXXSTD="$(CXXSTD)" CFLAGS="-Wno-char-subscripts" OBJ="$(DEP_BUILD_DIR)"
 
 clean:
 	$(MAKE) -C $(DEP_LIBS_DIRS) clean BUILD_DIR=$(DEP_BUILD_DIR)
