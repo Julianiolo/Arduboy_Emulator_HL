@@ -3,10 +3,11 @@
 
 #include "StreamUtils.h"
 #include "DataUtils.h"
+#include "LogUtils.h"
 
 #define LU_MODULE "Display"
 
-AB::Display::Display(A32u4::ATmega32u4* mcu) : mcu(mcu)
+AB::Display::Display(avr_t* avr) : avr(avr)
 #if AB_USE_HEAP
 ,pixels(WIDTH*HEIGHT), pixelsRaw((WIDTH*HEIGHT)/8)
 #endif

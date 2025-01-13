@@ -3,13 +3,14 @@
 
 #include <iostream>
 
-#include "ATmega32u4.h"
 #include "components/Display.h"
 #include "components/Sound.h"
 
+#include "simavr/sim/sim_avr.h"
+
 class Arduboy {
 public:
-	A32u4::ATmega32u4 mcu;
+	avr_t* avr;
 	AB::Display display;
 	AB::Sound sound;
 
@@ -38,12 +39,13 @@ public:
 	float emulationSpeed = 1;
 
 private:
-	std::function<void(uint8_t pinReg, reg_t oldVal, reg_t val)> genPinChangeFunc();
+	std::function<void(uint8_t pinReg, uint8_t oldVal, uint8_t val)> genPinChangeFunc();
 public:
 
 	Arduboy();
 	Arduboy(const Arduboy& src);
 	Arduboy& operator=(const Arduboy& src);
+	~Arduboy();
 
 	void reset();
 

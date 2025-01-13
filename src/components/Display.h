@@ -7,7 +7,9 @@
 
 #include "../config.h"
 
-#include "ATmega32u4.h"
+#include "simavr/sim/sim_avr.h"
+
+#define LU_CONTEXT {}
 
 class Arduboy;
 
@@ -18,8 +20,7 @@ namespace AB {
 		static constexpr uint8_t HEIGHT = 64;
 	private:
 		friend Arduboy;
-		A32u4::ATmega32u4* mcu;
-
+		avr_t* avr;
 #if !AB_USE_HEAP
 		std::array<uint8_t,WIDTH*HEIGHT> pixels;
 		std::array<uint8_t,(WIDTH*HEIGHT)/8> pixelsRaw;
@@ -100,7 +101,7 @@ namespace AB {
 		void startRecivingParams();
 		void stopRecivingParams();
 	public:
-		Display(A32u4::ATmega32u4* mcu);
+		Display(avr_t* avr);
 
 		void reset();
 

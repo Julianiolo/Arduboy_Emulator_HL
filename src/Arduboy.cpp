@@ -6,17 +6,27 @@
 #include "StreamUtils.h"
 #include "DataUtils.h"
 
-Arduboy::Arduboy() : display(&mcu) {
+static avr_t* setup_avr() {
+	avr_t* avr = avr_make_mcu_by_name("Atmega32u4");
+	avr_init(avr);
+	return avr;
+}
+
+static void setup_avr_callbacks(avr_t* avr) {
+	
+}
+
+Arduboy::Arduboy() : avr(setup_avr()), display(avr) {
 	mcu.setPinChangeCallB(genPinChangeFunc());
 }
-Arduboy::Arduboy(const Arduboy& src) : mcu(src.mcu), display(src.display),
+Arduboy::Arduboy(const Arduboy& src) : avr(avr), display(src.display),
 debug(src.debug), targetFPS(src.targetFPS), buttonState(src.buttonState), emulationSpeed(src.emulationSpeed)
 {
 	mcu.setPinChangeCallB(genPinChangeFunc());
-	display.mcu = &mcu;
+	display.avr = avr;
 }
 Arduboy& Arduboy::operator=(const Arduboy& src) {
-	mcu = src.mcu;
+	avr = src.avr; // TODO actually copy
 	mcu.setPinChangeCallB(genPinChangeFunc());
 	display = src.display;
 	display.mcu = &mcu;
