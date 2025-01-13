@@ -9,14 +9,17 @@
 static avr_t* setup_avr() {
 	avr_t* avr = avr_make_mcu_by_name("Atmega32u4");
 	avr_init(avr);
+	
 	return avr;
 }
 
-static void setup_avr_callbacks(avr_t* avr) {
-	
+static avr_irq_t* setup_avr_callbacks(avr_t* avr) {
+	const char* names[] = {"A", "B"};
+	avr_irq_t* irq = avr_alloc_irq(&avr->irq_pool, 0, 2, names);
+	return irq;
 }
 
-Arduboy::Arduboy() : avr(setup_avr()), display(avr) {
+Arduboy::Arduboy() : avr(setup_avr()), irqs(setup_avr_callbacks(avr)), display(avr) {
 	mcu.setPinChangeCallB(genPinChangeFunc());
 }
 Arduboy::Arduboy(const Arduboy& src) : avr(avr), display(src.display),

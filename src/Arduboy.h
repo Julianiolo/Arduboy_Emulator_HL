@@ -11,6 +11,7 @@
 class Arduboy {
 public:
 	avr_t* avr;
+	avr_irq_t* irqs;
 	AB::Display display;
 	AB::Sound sound;
 
