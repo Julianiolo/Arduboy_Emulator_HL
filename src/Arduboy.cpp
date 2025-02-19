@@ -78,7 +78,7 @@ void Arduboy::runForCycs(uint64_t num_cycs) {
 		uint16_t word2 = ((uint16_t)avr->flash[pc*2+3] << 8) | avr->flash[pc*2+2];
 
 		auto disasm = A32u4::Disassembler::disassemble(word1, word2, pc);
-		printf("@%6x:  %s\n", cycs, disasm.c_str());
+		printf("@%6lx:  %s\n", cycs, disasm.c_str());
 	}
 	
 	display.update();
