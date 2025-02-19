@@ -5,6 +5,7 @@
 
 #include "StreamUtils.h"
 #include "DataUtils.h"
+#include "extras/Disassembler.h"
 
 Arduboy::Arduboy() : display(&mcu) {
 	mcu.setPinChangeCallB(genPinChangeFunc());
@@ -54,7 +55,14 @@ void Arduboy::runForCycs(uint64_t num_cycs) {
 	uint64_t end_cycs = mcu.cpu.getTotalCycles() + num_cycs;
 	while(mcu.cpu.getTotalCycles() < end_cycs) {
 		mcu.execute(1, true);
-		std::cout << mcu.cpu.getPC() << " " << mcu.cpu.getTotalCycles() << "\n";
+
+		uint16_t pc = mcu.cpu.getPC();
+		uint64_t cycs = mcu.cpu.getTotalCycles();
+		uint16_t word1 = mcu.flash.getInst(pc);
+		uint16_t word2 = mcu.flash.getInst(pc+1);
+
+		auto disasm = A32u4::Disassembler::disassemble(word1, word2, pc);
+		printf("@%6x:  %s\n", cycs, disasm.c_str());
 	}
 
 	display.update();
