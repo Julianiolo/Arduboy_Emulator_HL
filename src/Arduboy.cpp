@@ -70,7 +70,7 @@ void Arduboy::runForCycs(uint64_t num_cycs) {
 	uint64_t end_cycs = avr->cycle + num_cycs;
 	while(avr->cycle < end_cycs) {
 		avr_run(avr);
-		std::cout << avr->pc << " " << avr->cycle << "\n";
+		std::cout << avr->pc/2 << " " << avr->cycle << "\n";
 	}
 	
 	display.update();
