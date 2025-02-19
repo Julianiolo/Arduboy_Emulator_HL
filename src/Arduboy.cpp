@@ -54,15 +54,19 @@ void Arduboy::runForCycs(uint64_t num_cycs) {
 
 	uint64_t end_cycs = mcu.cpu.getTotalCycles() + num_cycs;
 	while(mcu.cpu.getTotalCycles() < end_cycs) {
+		uint64_t last_cycs = mcu.cpu.getTotalCycles();
+
 		mcu.execute(1, true);
+		
 
 		uint16_t pc = mcu.cpu.getPC();
 		uint64_t cycs = mcu.cpu.getTotalCycles();
+		if(cycs == last_cycs) continue;
 		uint16_t word1 = mcu.flash.getInst(pc);
 		uint16_t word2 = mcu.flash.getInst(pc+1);
 
 		auto disasm = A32u4::Disassembler::disassemble(word1, word2, pc);
-		printf("@%6x:  %s\n", cycs, disasm.c_str());
+		printf("@%6lx:  %s\n", cycs, disasm.c_str());
 	}
 
 	display.update();
