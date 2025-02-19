@@ -48,10 +48,19 @@ void Arduboy::reset() {
 	sound.reset();
 }
 
-void Arduboy::newFrame() {
+void Arduboy::runForCycs(uint64_t num_cycs) {
 	updateButtons();
-	mcu.execute((uint64_t)(cycsPerFrame() * emulationSpeed), debug);
+
+	uint64_t end_cycs = mcu.cpu.getTotalCycles() + num_cycs;
+	while(mcu.cpu.getTotalCycles() < end_cycs) {
+		mcu.execute(1, true);
+		std::cout << mcu.cpu.getPC() << " " << mcu.cpu.getTotalCycles() << "\n";
+	}
+
 	display.update();
+}
+void Arduboy::newFrame() {
+	runForCycs((uint64_t)(cycsPerFrame() * emulationSpeed));
 }
 
 uint64_t Arduboy::cycsPerFrame() const{

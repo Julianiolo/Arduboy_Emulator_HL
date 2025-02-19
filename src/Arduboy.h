@@ -47,6 +47,7 @@ public:
 
 	void reset();
 
+	void runForCycs(uint64_t num_cycs);
 	void newFrame();
 	uint64_t cycsPerFrame() const;
 
