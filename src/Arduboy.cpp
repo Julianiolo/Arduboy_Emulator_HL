@@ -8,6 +8,7 @@
 #include "DataUtils.h"
 
 #include "simavr/sim/avr_ioport.h"
+#include "extras/Disassembler.h"
 
 static avr_t* setup_avr() {
 	avr_t* avr = avr_make_mcu_by_name("atmega32u4");
@@ -70,7 +71,14 @@ void Arduboy::runForCycs(uint64_t num_cycs) {
 	uint64_t end_cycs = avr->cycle + num_cycs;
 	while(avr->cycle < end_cycs) {
 		avr_run(avr);
-		std::cout << avr->pc/2 << " " << avr->cycle << "\n";
+
+		uint16_t pc = avr->pc/2;
+		uint64_t cycs = avr->cycle;
+		uint16_t word1 = ((uint16_t)avr->flash[pc*2+1] << 8) | avr->flash[pc*2+0];
+		uint16_t word2 = ((uint16_t)avr->flash[pc*2+3] << 8) | avr->flash[pc*2+2];
+
+		auto disasm = A32u4::Disassembler::disassemble(word1, word2, pc);
+		printf("@%6x:  %s\n", cycs, disasm.c_str());
 	}
 	
 	display.update();
