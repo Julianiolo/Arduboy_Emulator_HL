@@ -66,7 +66,7 @@ void Arduboy::runForCycs(uint64_t num_cycs) {
 		uint16_t word2 = mcu.flash.getInst(pc+1);
 
 		auto disasm = A32u4::Disassembler::disassemble(word1, word2, pc);
-		printf("@%6lx:  %s\n", cycs, disasm.c_str());
+		printf("@%8lu:  %s\n", cycs, disasm.c_str());
 	}
 
 	display.update();
